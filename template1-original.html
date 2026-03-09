@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>YOUR NAME — Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,900;1,400;1,900&family=DM+Mono:ital,wght@0,300;0,400;1,300&family=DM+Sans:wght@300;400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream: #F5F0E8;
+      --ink:   #1A1410;
+      --rust:  #C4440A;
+      --dusty: #8C7B6B;
+      --pale:  #EDE6D8;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--cream);
+      color: var(--ink);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      cursor: none;
+      overflow-x: hidden;
+    }
+
+    /* ── CUSTOM CURSOR ── */
+    .cursor {
+      width: 10px; height: 10px;
+      background: var(--rust);
+      border-radius: 50%;
+      position: fixed;
+      pointer-events: none;
+      z-index: 9999;
+      transition: transform 0.15s ease;
+      transform: translate(-50%, -50%);
+    }
+    .cursor-ring {
+      width: 36px; height: 36px;
+      border: 1px solid var(--rust);
+      border-radius: 50%;
+      position: fixed;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: all 0.12s ease;
+      opacity: 0.5;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 1.6rem 3rem;
+      mix-blend-mode: multiply;
+    }
+    .nav-logo {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--ink);
+      text-decoration: none;
+    }
+    .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+    .nav-links a {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--ink);
+      text-decoration: none;
+      position: relative;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute; bottom: -2px; left: 0;
+      width: 0; height: 1px;
+      background: var(--rust);
+      transition: width 0.3s ease;
+    }
+    .nav-links a:hover::after { width: 100%; }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr auto;
+      padding: 0 3rem 3rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-text {
+      grid-column: 1 / 2;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding-bottom: 4rem;
+      z-index: 2;
+    }
+
+    .hero-eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--rust);
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 0.2s forwards;
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-weight: 900;
+      font-size: clamp(4rem, 8vw, 8rem);
+      line-height: 0.92;
+      letter-spacing: -0.02em;
+      margin-bottom: 2rem;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 0.4s forwards;
+    }
+
+    h1 em {
+      font-style: italic;
+      color: var(--rust);
+    }
+
+    .hero-bio {
+      max-width: 380px;
+      font-size: 1rem;
+      line-height: 1.7;
+      color: var(--dusty);
+      opacity: 0;
+      animation: fadeUp 0.8s ease 0.6s forwards;
+    }
+
+    .hero-image-block {
+      grid-column: 2 / 3;
+      grid-row: 1 / 3;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      animation: fadeIn 1.2s ease 0.5s forwards;
+    }
+
+    .hero-placeholder-img {
+      width: 75%;
+      aspect-ratio: 3/4;
+      background: var(--pale);
+      border: 1px solid #d4c9b8;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-placeholder-img::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 40px,
+        rgba(196,68,10,0.04) 40px,
+        rgba(196,68,10,0.04) 41px
+      );
+    }
+
+    .hero-placeholder-img span {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--dusty);
+      z-index: 1;
+    }
+
+    .hero-placeholder-img img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+      position: absolute;
+      inset: 0;
+    }
+
+    .hero-scroll-hint {
+      grid-column: 1 / 2;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding-top: 2rem;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 1s forwards;
+    }
+
+    .scroll-line {
+      width: 40px; height: 1px;
+      background: var(--ink);
+      position: relative;
+      overflow: hidden;
+    }
+    .scroll-line::after {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 100%; height: 100%;
+      background: var(--rust);
+      animation: slideLine 2s ease 1.5s infinite;
+    }
+    @keyframes slideLine {
+      0%   { left: -100%; }
+      100% { left: 100%; }
+    }
+
+    .scroll-hint-text {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--dusty);
+    }
+
+    /* ── MARQUEE STRIP ── */
+    .marquee-strip {
+      overflow: hidden;
+      border-top: 1px solid var(--ink);
+      border-bottom: 1px solid var(--ink);
+      padding: 0.8rem 0;
+      background: var(--ink);
+    }
+    .marquee-inner {
+      display: flex;
+      gap: 3rem;
+      animation: marquee 20s linear infinite;
+      white-space: nowrap;
+    }
+    .marquee-inner span {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 1.1rem;
+      color: var(--cream);
+      opacity: 0.7;
+      flex-shrink: 0;
+    }
+    .marquee-inner span.dot {
+      color: var(--rust);
+      font-style: normal;
+      opacity: 1;
+    }
+    @keyframes marquee {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* ── SECTION COMMONS ── */
+    section { padding: 7rem 3rem; }
+
+    .section-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--rust);
+      margin-bottom: 3rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .section-label::before {
+      content: '';
+      display: inline-block;
+      width: 24px; height: 1px;
+      background: var(--rust);
+    }
+
+    h2 {
+      font-family: 'Playfair Display', serif;
+      font-weight: 900;
+      font-size: clamp(2.5rem, 5vw, 4.5rem);
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+    }
+
+    /* ── ABOUT ── */
+    #about {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6rem;
+      align-items: start;
+      border-top: 1px solid #d4c9b8;
+    }
+
+    .about-left h2 { margin-bottom: 2.5rem; }
+    .about-left h2 em { font-style: italic; color: var(--rust); }
+
+    .about-right {
+      padding-top: 5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .about-right p {
+      font-size: 1.05rem;
+      line-height: 1.85;
+      color: #3d3028;
+    }
+
+    .about-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    .tag {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      border: 1px solid var(--ink);
+      padding: 0.4rem 0.9rem;
+      transition: all 0.2s ease;
+    }
+    .tag:hover {
+      background: var(--ink);
+      color: var(--cream);
+    }
+
+    /* ── WORK ── */
+    #work { border-top: 1px solid #d4c9b8; }
+
+    .work-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 4rem;
+    }
+
+    /* Asymmetric 12-col grid */
+    .project-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 1.5rem;
+      row-gap: 3rem;
+    }
+
+    .project-card {
+      position: relative;
+      overflow: hidden;
+      cursor: none;
+    }
+
+    .project-card:nth-child(1) { grid-column: 1 / 8; }
+    .project-card:nth-child(2) { grid-column: 8 / 13; }
+    .project-card:nth-child(3) { grid-column: 1 / 5; }
+    .project-card:nth-child(4) { grid-column: 5 / 10; }
+    .project-card:nth-child(5) { grid-column: 10 / 13; }
+    .project-card:nth-child(6) { grid-column: 1 / 6; }
+    .project-card:nth-child(7) { grid-column: 6 / 13; }
+
+    .project-img {
+      width: 100%;
+      aspect-ratio: 4/3;
+      background: var(--pale);
+      border: 1px solid #d4c9b8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.5s ease;
+    }
+
+    .project-card:nth-child(odd) .project-img { background: #e8e0d0; }
+
+    .project-img::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--ink);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      z-index: 1;
+    }
+
+    .project-card:hover .project-img::before { opacity: 0.08; }
+    .project-card:hover .project-img { transform: scale(1.02); }
+
+    .project-img img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .project-img-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--dusty);
+    }
+
+    .project-meta {
+      padding-top: 1.2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+
+    .project-info h3 {
+      font-family: 'Playfair Display', serif;
+      font-weight: 400;
+      font-size: 1.2rem;
+      line-height: 1.3;
+      margin-bottom: 0.3rem;
+    }
+
+    .project-type {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--dusty);
+    }
+
+    .project-year {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--dusty);
+      flex-shrink: 0;
+    }
+
+    /* ── CV ── */
+    #cv {
+      border-top: 1px solid #d4c9b8;
+      background: var(--ink);
+      color: var(--cream);
+    }
+    #cv .section-label { color: var(--rust); }
+    #cv .section-label::before { background: var(--rust); }
+    #cv h2 { color: var(--cream); }
+
+    .cv-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6rem;
+      margin-top: 4rem;
+    }
+
+    .cv-column h3 {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--rust);
+      margin-bottom: 2rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .cv-entry {
+      padding: 1.5rem 0;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 2rem;
+      align-items: start;
+    }
+
+    .cv-year {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      color: rgba(255,255,255,0.35);
+      padding-top: 0.25rem;
+      min-width: 60px;
+    }
+
+    .cv-entry-content h4 {
+      font-family: 'Playfair Display', serif;
+      font-weight: 400;
+      font-size: 1rem;
+      color: var(--cream);
+      margin-bottom: 0.2rem;
+    }
+
+    .cv-entry-content p {
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.45);
+      line-height: 1.5;
+    }
+
+    .cv-download {
+      margin-top: 3rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 1rem;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--cream);
+      text-decoration: none;
+      border: 1px solid rgba(255,255,255,0.2);
+      padding: 1rem 2rem;
+      transition: all 0.3s ease;
+    }
+    .cv-download:hover {
+      background: var(--rust);
+      border-color: var(--rust);
+    }
+    .cv-download::after {
+      content: '↓';
+      transition: transform 0.3s ease;
+    }
+    .cv-download:hover::after { transform: translateY(3px); }
+
+    /* ── CONTACT ── */
+    #contact {
+      border-top: 1px solid #d4c9b8;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6rem;
+      align-items: end;
+    }
+
+    #contact h2 { margin-bottom: 1.5rem; }
+    #contact h2 em { font-style: italic; color: var(--rust); }
+
+    .contact-sub {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: var(--dusty);
+      max-width: 380px;
+    }
+
+    .contact-right { display: flex; flex-direction: column; gap: 1rem; }
+
+    .contact-link {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.4rem 0;
+      border-bottom: 1px solid #d4c9b8;
+      text-decoration: none;
+      color: var(--ink);
+      transition: all 0.3s ease;
+    }
+    .contact-link:hover { padding-left: 0.5rem; border-color: var(--rust); }
+    .contact-link:hover .contact-link-label { color: var(--rust); }
+
+    .contact-link-label {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      font-style: italic;
+      transition: color 0.3s ease;
+    }
+
+    .contact-link-tag {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--dusty);
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 2rem 3rem;
+      border-top: 1px solid #d4c9b8;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    footer p {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.1em;
+      color: var(--dusty);
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(32px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      nav { padding: 1.2rem 1.5rem; }
+      #hero { grid-template-columns: 1fr; padding: 6rem 1.5rem 3rem; }
+      .hero-image-block { display: none; }
+      section { padding: 5rem 1.5rem; }
+      #about, .cv-grid, #contact { grid-template-columns: 1fr; gap: 3rem; }
+      .about-right { padding-top: 0; }
+      .project-grid { grid-template-columns: 1fr 1fr; }
+      .project-card:nth-child(n) { grid-column: auto; }
+      .work-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+      footer { flex-direction: column; gap: 1rem; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <!-- NAV -->
+  <nav>
+    <a href="#hero" class="nav-logo">Your Name</a>
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#work">Work</a></li>
+      <li><a href="#cv">CV</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-text">
+      <p class="hero-eyebrow">PhD · Researcher · Creative</p>
+      <h1>Your<br><em>Name</em><br>Here.</h1>
+      <p class="hero-bio">
+        I make work that lives between disciplines — from academic research to hands-on creative practice. Currently exploring [your focus here].
+      </p>
+    </div>
+
+    <div class="hero-image-block">
+      <div class="hero-placeholder-img">
+        <!-- Replace with: <img src="images/hero.jpg" alt="Your Name"> -->
+        <span>Your Photo</span>
+        <span>or Hero Image</span>
+      </div>
+    </div>
+
+    <div class="hero-scroll-hint">
+      <div class="scroll-line"></div>
+      <span class="scroll-hint-text">Scroll to explore</span>
+    </div>
+  </section>
+
+  <!-- MARQUEE -->
+  <div class="marquee-strip">
+    <div class="marquee-inner">
+      <span>Research</span><span class="dot">✦</span>
+      <span>Creative Practice</span><span class="dot">✦</span>
+      <span>PhD Graduate</span><span class="dot">✦</span>
+      <span>Writing</span><span class="dot">✦</span>
+      <span>Making</span><span class="dot">✦</span>
+      <span>Thinking</span><span class="dot">✦</span>
+      <span>Research</span><span class="dot">✦</span>
+      <span>Creative Practice</span><span class="dot">✦</span>
+      <span>PhD Graduate</span><span class="dot">✦</span>
+      <span>Writing</span><span class="dot">✦</span>
+      <span>Making</span><span class="dot">✦</span>
+      <span>Thinking</span><span class="dot">✦</span>
+    </div>
+  </div>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="about-left reveal">
+      <div class="section-label">About</div>
+      <h2>The <em>mind</em><br>behind<br>the work.</h2>
+    </div>
+    <div class="about-right reveal">
+      <p>
+        I recently completed a PhD in [Your Field] at [Your University], where I spent several years thinking hard about [your research focus]. That intellectual rigor now feeds into everything I make.
+      </p>
+      <p>
+        These days I work across research and creative practice — equally at home in an archive or a studio. I'm drawn to work that refuses easy categorization, that sits at the edge of disciplines and makes something new from that friction.
+      </p>
+      <p>
+        Based in [Your City]. Open to collaboration, commissions, and conversation.
+      </p>
+      <div class="about-tags">
+        <span class="tag">Your Field</span>
+        <span class="tag">Research</span>
+        <span class="tag">Writing</span>
+        <span class="tag">Creative Practice</span>
+        <span class="tag">Add More</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- WORK -->
+  <section id="work">
+    <div class="work-header reveal">
+      <div>
+        <div class="section-label">Selected Work</div>
+        <h2>Projects &amp;<br><em>Research</em></h2>
+      </div>
+    </div>
+
+    <div class="project-grid">
+
+      <div class="project-card reveal">
+        <div class="project-img">
+          <!-- <img src="images/project-1.jpg" alt="Your Featured Project"> -->
+          <span class="project-img-label">Project Image</span>
+        </div>
+        <div class="project-meta">
+          <div class="project-info">
+            <h3>Your Featured Project</h3>
+            <span class="project-type">Research · Publication</span>
+          </div>
+          <span class="project-year">2024</span>
+        </div>
+      </div>
+
+      <div class="project-card reveal">
+        <div class="project-img">
+          <span class="project-img-label">Project Image</span>
+        </div>
+        <div class="project-meta">
+          <div class="project-info">
+            <h3>Creative Work Title</h3>
+            <span class="project-type">Creative Practice</span>
+          </div>
+          <span class="project-year">2024</span>
+        </div>
+      </div>
+
+      <div class="project-card reveal">
+        <div class="project-img">
+          <span class="project-img-label">Project Image</span>
+        </div>
+        <div class="project-meta">
+          <div class="project-info">
+            <h3>Dissertation Chapter</h3>
+            <span class="project-type">Academic Writing</span>
+          </div>
+          <span class="project-year">2023</span>
+        </div>
+      </div>
+
+      <div class="project-card reveal">
+        <div class="project-img">
+          <span class="project-img-label">Project Image</span>
+        </div>
+        <div class="project-meta">
+          <div class="project-info">
+            <h3>Collaborative Project</h3>
+            <span class="project-type">Interdisciplinary</span>
+          </div>
+          <span class="project-year">2023</span>
+        </div>
+      </div>
+
+      <div class="project-card reveal">
+        <div class="project-img">
+          <span class="project-img-label">Project Image</span>
+        </div>
+        <div class="project-meta">
+          <div class="project-info">
+            <h3>Exhibition / Show</h3>
+            <span class="project-type">Creative</span>
+          </div>
+          <span class="project-year">2022</span>
+        </div>
+      </div>
+
+      <div class="project-card reveal">
+        <div class="project-img">
+          <span class="project-img-label">Project Image</span>
+        </div>
+        <div class="project-meta">
+          <div class="project-info">
+            <h3>Essay or Article</h3>
+            <span class="project-type">Writing</span>
+          </div>
+          <span class="project-year">2022</span>
+        </div>
+      </div>
+
+      <div class="project-card reveal">
+        <div class="project-img">
+          <span class="project-img-label">Project Image</span>
+        </div>
+        <div class="project-meta">
+          <div class="project-info">
+            <h3>Another Project</h3>
+            <span class="project-type">Research · Creative</span>
+          </div>
+          <span class="project-year">2021</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- CV -->
+  <section id="cv">
+    <div class="section-label reveal">Curriculum Vitae</div>
+    <h2 class="reveal">Background &amp;<br><em>Experience</em></h2>
+
+    <div class="cv-grid">
+      <div class="reveal">
+        <h3>Education</h3>
+        <div class="cv-entry">
+          <span class="cv-year">2024</span>
+          <div class="cv-entry-content">
+            <h4>PhD in [Your Field]</h4>
+            <p>[Your University] — Dissertation: "[Your Dissertation Title]"</p>
+          </div>
+        </div>
+        <div class="cv-entry">
+          <span class="cv-year">2018</span>
+          <div class="cv-entry-content">
+            <h4>MA in [Your Field]</h4>
+            <p>[University Name]</p>
+          </div>
+        </div>
+        <div class="cv-entry">
+          <span class="cv-year">2016</span>
+          <div class="cv-entry-content">
+            <h4>BA in [Your Field]</h4>
+            <p>[University Name] — [Honors / Distinction if applicable]</p>
+          </div>
+        </div>
+
+        <h3 style="margin-top: 3rem;">Publications</h3>
+        <div class="cv-entry">
+          <span class="cv-year">2024</span>
+          <div class="cv-entry-content">
+            <h4>"Your Paper Title Here"</h4>
+            <p>Journal Name, Vol. X, Issue X</p>
+          </div>
+        </div>
+        <div class="cv-entry">
+          <span class="cv-year">2022</span>
+          <div class="cv-entry-content">
+            <h4>"Another Publication Title"</h4>
+            <p>Journal or Book, Publisher</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="reveal">
+        <h3>Experience</h3>
+        <div class="cv-entry">
+          <span class="cv-year">2024—</span>
+          <div class="cv-entry-content">
+            <h4>Current Role or Project</h4>
+            <p>Description of what you're doing now — research, residency, freelance, etc.</p>
+          </div>
+        </div>
+        <div class="cv-entry">
+          <span class="cv-year">2020–24</span>
+          <div class="cv-entry-content">
+            <h4>Doctoral Researcher</h4>
+            <p>[Your University] — Teaching, research, and [other activities]</p>
+          </div>
+        </div>
+        <div class="cv-entry">
+          <span class="cv-year">2019</span>
+          <div class="cv-entry-content">
+            <h4>Previous Role</h4>
+            <p>Organisation or institution, brief description</p>
+          </div>
+        </div>
+
+        <h3 style="margin-top: 3rem;">Awards &amp; Grants</h3>
+        <div class="cv-entry">
+          <span class="cv-year">2023</span>
+          <div class="cv-entry-content">
+            <h4>Award or Fellowship Name</h4>
+            <p>Awarding body</p>
+          </div>
+        </div>
+        <div class="cv-entry">
+          <span class="cv-year">2021</span>
+          <div class="cv-entry-content">
+            <h4>Research Grant</h4>
+            <p>Funding body — brief project description</p>
+          </div>
+        </div>
+
+        <a href="your-cv.pdf" class="cv-download">Download Full CV</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="contact-left reveal">
+      <div class="section-label">Contact</div>
+      <h2>Let's be<br><em>in touch.</em></h2>
+      <p class="contact-sub">
+        Whether it's a collaboration, a commission, a question, or just a good conversation — I'd love to hear from you.
+      </p>
+    </div>
+    <div class="contact-right reveal">
+      <a href="mailto:your@email.com" class="contact-link">
+        <span class="contact-link-label">Email</span>
+        <span class="contact-link-tag">your@email.com</span>
+      </a>
+      <a href="https://twitter.com/yourhandle" class="contact-link" target="_blank">
+        <span class="contact-link-label">Twitter / X</span>
+        <span class="contact-link-tag">@yourhandle</span>
+      </a>
+      <a href="https://linkedin.com/in/yourprofile" class="contact-link" target="_blank">
+        <span class="contact-link-label">LinkedIn</span>
+        <span class="contact-link-tag">yourprofile</span>
+      </a>
+      <a href="https://github.com/yourusername" class="contact-link" target="_blank">
+        <span class="contact-link-label">GitHub</span>
+        <span class="contact-link-tag">yourusername</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>© 2025 Your Name. All rights reserved.</p>
+    <p>Built with HTML · Hosted on GitHub Pages</p>
+  </footer>
+
+  <script>
+    // Custom cursor
+    const cursor = document.getElementById('cursor');
+    const ring   = document.getElementById('cursorRing');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      cursor.style.left = mx + 'px';
+      cursor.style.top  = my + 'px';
+    });
+
+    function animateRing() {
+      rx += (mx - rx) * 0.12;
+      ry += (my - ry) * 0.12;
+      ring.style.left = rx + 'px';
+      ring.style.top  = ry + 'px';
+      requestAnimationFrame(animateRing);
+    }
+    animateRing();
+
+    document.querySelectorAll('a, button, .project-card, .tag').forEach(el => {
+      el.addEventListener('mouseenter', () => {
+        cursor.style.transform = 'translate(-50%,-50%) scale(2)';
+        ring.style.transform   = 'translate(-50%,-50%) scale(1.5)';
+        ring.style.opacity     = '0.2';
+      });
+      el.addEventListener('mouseleave', () => {
+        cursor.style.transform = 'translate(-50%,-50%) scale(1)';
+        ring.style.transform   = 'translate(-50%,-50%) scale(1)';
+        ring.style.opacity     = '0.5';
+      });
+    });
+
+    // Scroll reveal
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => entry.target.classList.add('visible'), i * 80);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // Stagger project cards
+    document.querySelectorAll('.project-card').forEach((card, i) => {
+      card.style.transitionDelay = (i * 0.07) + 's';
+    });
+  </script>
+</body>
+</html>
